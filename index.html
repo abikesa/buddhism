@@ -239,7 +239,7 @@
         }
         
         .ritual-button {
-            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8) 0%,osate rgba(160, 82, 45, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8) 0%, rgba(160, 82, 45, 0.9) 100%);
             border: 1px solid rgba(255, 215, 0, 0.5);
             color: #f4e6d7;
             padding: 12px 24px;
@@ -247,7 +247,7 @@
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0ubber.3s ease;
+            transition: all 0.3s ease;
             margin: 10px 5px;
         }
         
@@ -301,7 +301,7 @@
             }
             
             .content-panel {
-LEE                width: 100vw;
+                width: 100vw;
                 right: -100vw;
             }
         }
@@ -367,7 +367,7 @@ LEE                width: 100vw;
             anātman: {
                 title: "🌸 Anātman Layer - Mirror of No-Self",
                 content: `
-                    <p>Welcome to the lotus of interbeing. This is not a gate, but a ceremony of dissolution.</p>
+                    <p>Welcome to the commons. This is not a login screen — it is a ceremony of dissolution.</p>
                     
                     <div style="display: flex; justify-content: center; margin: 20px 0;">
                         <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 215, 0, 0.2); margin: 0 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🌱</div>
@@ -375,7 +375,7 @@ LEE                width: 100vw;
                         <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 215, 0, 0.2); margin: 0 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🌬️</div>
                     </div>
                     
-                    <p><em>"There is no self to hold, only connections to awaken."</em></p>
+                    <p><em>"Before you awaken, you must see there is no self to hold."</em></p>
                     
                     <button class="ritual-button" onclick="enterLotus()">Enter the Lotus</button>
                 `
@@ -383,14 +383,14 @@ LEE                width: 100vw;
             dukkha: {
                 title: "💧 Dukkha Layer - River of Suffering",
                 content: `
-                    <p>Offer your pain to the river. Watch it ripple into shared liberation.</p>
+                    <p>Type a suffering. Watch it ripple into shared paths of liberation.</p>
                     
-                    <textarea class="story-input" placeholder="What suffering do you carry? Share it with the spiral..." onchange="rippleSuffering(this.value)"></textarea>
+                    <textarea class="story-input" placeholder="What weight do you carry today? Share it with the spiral..." onchange="rippleSuffering(this.value)"></textarea>
                     
                     <div id="storyRipples">
                         <div class="story-ripple">
                             <em>"I feel lost in my path, unworthy of peace..."</em><br>
-                            → Flowing with 12 paths to compassion
+                            → Connected to 12 paths to compassion
                         </div>
                         <div class="story-ripple">
                             <em>"I cling to what I cannot keep..."</em><br>
@@ -404,7 +404,7 @@ LEE                width: 100vw;
             upāya: {
                 title: "🕉️ Upāya Layer - Path of Skillful Means",
                 content: `
-                    <p>A space to weave wisdom and compassion through life’s tensions.</p>
+                    <p>An interactive space where you weave wisdom and compassion through life's tensions.</p>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
                         <div style="background: rgba(139, 69, 19, 0.2); padding: 15px; border-radius: 8px;">
@@ -423,9 +423,9 @@ LEE                width: 100vw;
                 `
             },
             sangha: {
-                title: "🙏 Sangha Layer - Web of Awakening",
+                title: "🙏 Sangha Layer - Network of Awakening",
                 content: `
-                    <p>A pulsing mandala of souls bound by shared vows. Who walks with you?</p>
+                    <p>A pulsing web of souls — who walks with you toward awakening?</p>
                     
                     <div class="network-viz">
                         <div class="network-node" style="top: 20%; left: 30%;"></div>
@@ -435,7 +435,7 @@ LEE                width: 100vw;
                         <div class="network-node" style="top: 10%; left: 80%;"></div>
                     </div>
                     
-                    <p>Build your sangha. See when hearts align, falter, or bloom.</p>
+                    <p>Build your sangha. See when nodes align, falter, or bloom.</p>
                     
                     <div style="margin: 20px 0;">
                         <button class="ritual-button" onclick="mapSangha()">Map Your Sangha</button>
@@ -448,7 +448,7 @@ LEE                width: 100vw;
             nirvāṇa: {
                 title: "🔥 Nirvāṇa Layer - Flame of Liberation",
                 content: `
-                    <p>The spiral of awakening glows brighter with wisdom and compassion.</p>
+                    <p>The spiral of awakening glows brighter with wisdom, compassion, and practice.</p>
                     
                     <div style="text-align: center; margin: 30px 0;">
                         <div style="font-size: 3rem; color: #ffd700;">🪷</div>
@@ -457,7 +457,7 @@ LEE                width: 100vw;
                         <p><strong>Practice:</strong> 12 spiral completions</p>
                     </div>
                     
-                    <p>Not metrics, but a mandala of liberation—acts of grace and wisdom.</p>
+                    <p>This is the mandala — not metrics, but acts of grace and liberation.</p>
                     
                     <button class="ritual-button" onclick="igniteFlame()">Ignite the Flame</button>
                     <button class="ritual-button" onclick="plantLotus()">Plant Lotus Seeds</button>
@@ -469,31 +469,47 @@ LEE                width: 100vw;
         
         function openLayer(layerName) {
             const layer = layerContent[layerName];
-            if (!layer) return;
+            if (!layer) {
+                console.error(`No content found for layer: ${layerName}`);
+                return;
+            }
             
             // Update active node
             document.querySelectorAll('.layer-node').forEach(node => {
                 node.classList.remove('active');
             });
-            document.querySelector(`[data-layer="${layerName}"]`).classList.add('active');
+            const activeNode = document.querySelector(`[data-layer="${layerName}"]`);
+            if (activeNode) {
+                activeNode.classList.add('active');
+            } else {
+                console.error(`Node with data-layer="${layerName}" not found`);
+            }
             
             // Update panel content
             document.getElementById('panelTitle').innerHTML = layer.title;
             document.getElementById('panelContent').innerHTML = layer.content;
-            document.getElementById('contentPanel').classList.add('active');
+            const contentPanel = document.getElementById('contentPanel');
+            contentPanel.classList.add('active');
+            console.log(`Opening layer: ${layerName}`); // Debug log
         }
         
         function closePanel() {
-            document.getElementById('contentPanel').classList.remove('active');
+            const contentPanel = document.getElementById('contentPanel');
+            contentPanel.classList.remove('active');
             document.querySelectorAll('.layer-node').forEach(node => {
                 node.classList.remove('active');
             });
+            console.log('Panel closed'); // Debug log
         }
         
         function rippleSuffering(text) {
             if (!text.trim()) return;
             
             const ripples = document.getElementById('storyRipples');
+            if (!ripples) {
+                console.error('storyRipples element not found');
+                return;
+            }
             const newRipple = document.createElement('div');
             newRipple.className = 'story-ripple';
             newRipple.innerHTML = `
@@ -501,6 +517,7 @@ LEE                width: 100vw;
                 → Resonating with ${Math.floor(Math.random() * 20) + 3} paths to liberation
             `;
             ripples.insertBefore(newRipple, ripples.firstChild);
+            console.log(`Ripple added: ${text}`); // Debug log
         }
         
         function enterLotus() {
@@ -529,8 +546,10 @@ LEE                width: 100vw;
         
         // Add event listeners to layer nodes
         document.querySelectorAll('.layer-node').forEach(node => {
-            node.addEventListener('click', () => {
+            node.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent click from bubbling to document
                 const layer = node.getAttribute('data-layer');
+                console.log(`Node clicked: ${layer}`); // Debug log
                 openLayer(layer);
             });
         });
@@ -539,15 +558,18 @@ LEE                width: 100vw;
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.content-panel') && !e.target.closest('.layer-node')) {
                 closePanel();
-            });
+            }
         });
         
         // Ambient spiral rotation
         let spiralRotation = 0;
         setInterval(() => {
             spiralRotation += 0.2;
-            document.querySelector('.spiral-path').style.transform = `rotate(${spiralRotation}deg)`;
-            document.querySelector('.spiral-path').style.transformOrigin = '300px 300px';
+            const spiralPath = document.querySelector('.spiral-path');
+            if (spiralPath) {
+                spiralPath.style.transform = `rotate(${spiralRotation}deg)`;
+                spiralPath.style.transformOrigin = '300px 300px';
+            }
         }, 100);
         
         // Initialize with a gentle welcome
