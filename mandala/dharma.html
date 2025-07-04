@@ -266,6 +266,44 @@
             justify-content: center;
         }
 
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border: 1px solid #4ecdc4;
+            max-width: 300px;
+            white-space: nowrap;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
         .footer {
             text-align: center;
             margin-top: 80px;
@@ -314,6 +352,9 @@
     </style>
 </head>
 <body>
+    <div class="tooltip" id="tooltip"></div>
+    <div class="notification" id="notification"></div>
+    
     <div class="container">
         <div class="header">
             <h1 class="title">The Pentad Glyph System</h1>
@@ -525,6 +566,16 @@ symbolic_recursion: |
         const affectValue = document.getElementById('affectValue');
         const recursionValue = document.getElementById('recursionValue');
         const equilibriumResult = document.getElementById('equilibriumResult');
+        const tooltip = document.getElementById('tooltip');
+        const notification = document.getElementById('notification');
+
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
 
         function updateEquilibrium() {
             const affect = parseFloat(affectSlider.value);
@@ -558,19 +609,30 @@ symbolic_recursion: |
         affectSlider.addEventListener('input', updateEquilibrium);
         recursionSlider.addEventListener('input', updateEquilibrium);
 
-        // Glyph hover effects
+        // Glyph hover effects with tooltips
         document.querySelectorAll('.glyph').forEach(glyph => {
-            glyph.addEventListener('mouseenter', function() {
+            glyph.addEventListener('mouseenter', function(e) {
                 const info = this.getAttribute('data-info');
-                console.log(info); // In a real app, this would show a tooltip
+                tooltip.textContent = info;
+                tooltip.classList.add('visible');
+                
+                // Position tooltip near cursor
+                const rect = this.getBoundingClientRect();
+                tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                tooltip.style.top = (rect.top - 50) + 'px';
+            });
+            
+            glyph.addEventListener('mouseleave', function() {
+                tooltip.classList.remove('visible');
             });
         });
 
-        // Equilibrium card interactions
+        // Equilibrium card interactions with notifications
         document.querySelectorAll('.equilibrium-card').forEach(card => {
             card.addEventListener('click', function() {
                 const title = this.querySelector('h4').textContent;
-                console.log(`Exploring ${title} equilibrium...`);
+                const description = this.querySelector('p').textContent;
+                showNotification(`Exploring ${title}: ${description}`);
             });
         });
 
