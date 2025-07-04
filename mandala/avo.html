@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job’s Spiral - AVO and Interbeing</title>
+    <style>
+        /* CSS remains unchanged from the original template */
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: radial-gradient(circle at center, #1a0f0a 0%, #2d1810 40%, #0f0506 100%);
+            color: #f4e6d7;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Ambient background spirals */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(160, 82, 45, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(205, 133, 63, 0.05) 0%, transparent 70%);
+            animation: breathe 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.6; transform: scale(1.05) rotate(2deg); }
+        }
+        
+        .main-spiral {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            z-index: 1;
+        }
+        
+        .spiral-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 20px rgba(139, 69, 19, 0.5));
+        }
+        
+        .spiral-path {
+            fill: none;
+            stroke: url(#spiralGradient);
+            stroke-width: 3;
+            stroke-linecap: round;
+            animation: spiralGlow 8s ease-in-out infinite;
+        }
+        
+        @keyframes spiralGlow {
+            0%, 100% { stroke-width: 3; opacity: 0.7; }
+            50% { stroke-width: 5; opacity: 1; }
+        }
+        
+        .layer-node {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 69, 19, 0.3) 0%, rgba(160, 82, 45, 0.6) 70%);
+            border: 2px solid rgba(205, 133, 63, 0.7);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .layer-node:hover {
+            transform: scale(1.15);
+            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.4);
+            border-color: rgba(255, 215, 0, 0.8);
+        }
+        
+        .layer-node.active {
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(139, 69, 19, 0.8) 70%);
+            border-color: #ffd700;
+            transform: scale(1.2);
+        }
+        
+        .node-icon {
+            font-size: 2rem;
+            margin-bottom: 4px;
+        }
+        
+        .node-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Layer positions in spiral */
+        .no-self { top: 50px; left: 250px; }
+        .suffering { top: 150px; right: 80px; }
+        .questioning { bottom: 150px; right: 100px; }
+        .community { bottom: 80px; left: 150px; }
+        .whirlwind { top: 200px; left: 50px; }
+        
+        .content-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(26, 15, 10, 0.95) 0%, rgba(45, 24, 16, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(205, 133, 63, 0.3);
+            padding: 40px 30px;
+            transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            overflow-y: auto;
+        }
+        
+        .content-panel.active {
+            right: 0;
+        }
+        
+        .panel-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #f4e6d7;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .panel-close:hover {
+            opacity: 1;
+        }
+        
+        .panel-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #ffd700;
+        }
+        
+        .panel-content {
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+        
+        .story-input {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(45, 24, 16, 0.5);
+            border: 1px solid rgba(205, 133, 63, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            color: #f4e6d7;
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            resize: vertical;
+            margin: 20px 0;
+        }
+        
+        .story-input::placeholder {
+            color: rgba(244, 230, 215, 0.5);
+            font-style: italic;
+        }
+        
+        .story-ripple {
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            border-left: 3px solid rgba(255, 215, 0, 0.6);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .central-wisdom {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .wisdom-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            opacity: 0.8;
+            max-width: 200px;
+            line-height: 1.5;
+        }
+        
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
+        }
+        
+        .ritual-button {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.8) 0%, rgba(160, 82, 45, 0.9) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            color: #f4e6d7;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+        
+        .ritual-button:hover {
+            background: linear-gradient(135deg, rgba(160, 82, 45, 0.9) 0%, rgba(139, 69, 19, 1) 100%);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+        }
+        
+        .network-viz {
+            width: 100%;
+            height: 200px;
+            background: rgba(45, 24, 16, 0.3);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .network-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 215, 0, 0.7);
+            border-radius: 50%;
+            animation: networkPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes networkPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+        }
+        
+        @media (max-width: 768px) {
+            .main-spiral {
+                width: 400px;
+                height: 400px;
+            }
+            
+            .layer-node {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .node-icon {
+                font-size: 1.5rem;
+            }
+            
+            .node-label {
+                font-size: 0.7rem;
+            }
+            
+            .content-panel {
+                width: 100vw;
+                right: -100vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pulse-ring"></div>
+    
+    <div class="main-spiral">
+        <svg class="spiral-svg" viewBox="0 0 600 600">
+            <defs>
+                <linearGradient id="spiralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="rgba(139, 69, 19, 0.8)" />
+                    <stop offset="50%" stop-color="rgba(255, 215, 0, 0.9)" />
+                    <stop offset="100%" stop-color="rgba(160, 82, 45, 0.7)" />
+                </linearGradient>
+            </defs>
+            <path class="spiral-path" d="M300,300 Q350,250 400,300 T450,400 T350,450 T200,400 T150,250 T250,150 T400,200 T500,350 T400,500 T150,450 T50,200 T200,50 T450,100 T550,400 T450,550 T100,500 T0,150" />
+        </svg>
+        
+        <div class="layer-node no-self" data-layer="no-self">
+            <div class="node-icon">🌫️</div>
+            <div class="node-label">No-Self</div>
+        </div>
+        
+        <div class="layer-node suffering" data-layer="suffering">
+            <div class="node-icon">💔</div>
+            <div class="node-label">Suffering</div>
+        </div>
+        
+        <div class="layer-node questioning" data-layer="questioning">
+            <div class="node-icon">❓</div>
+            <div class="node-label">Questioning</div>
+        </div>
+        
+        <div class="layer-node community" data-layer="community">
+            <div class="node-icon">🤝</div>
+            <div class="node-label">Community</div>
+        </div>
+        
+        <div class="layer-node whirlwind" data-layer="whirlwind">
+            <div class="node-icon">🌪️</div>
+            <div class="node-label">Whirlwind</div>
+        </div>
+        
+        <div class="central-wisdom">
+            <div class="wisdom-text">
+                "I am not the agent, yet meaning spirals through my endurance."
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-panel" id="contentPanel">
+        <button class="panel-close" onclick="closePanel()">×</button>
+        <h2 class="panel-title" id="panelTitle">Layer Name</h2>
+        <div class="panel-content" id="panelContent">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const layerContent = {
+            'no-self': {
+                title: "🌫️ No-Self Layer - Dissolution of Job’s Identity",
+                content: `
+                    <p>Job’s self is stripped away, an object in the divine drama. No agency, only endurance.</p>
+                    
+                    <div style="display: flex; justify-content: center; margin: 20px 0;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 215, 0, 0.2); margin: 0 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🙇</div>
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 215, 0, 0.2); margin: 0 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">⚖️</div>
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 215, 0, 0.2); margin: 0 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">🌌</div>
+                    </div>
+                    
+                    <p><em>"I am not my wealth, my family, my body. What remains?"</em></p>
+                    
+                    <button class="ritual-button" onclick="dissolveSelf()">Dissolve the Self</button>
+                `
+            },
+            'suffering': {
+                title: "💔 Suffering Layer - Job’s Endurance",
+                content: `
+                    <p>Job endures as the object of affliction. Share your own suffering to see it ripple.</p>
+                    
+                    <textarea class="story-input" placeholder="What suffering do you carry, as Job did? Share it..." onchange="rippleSuffering(this.value)"></textarea>
+                    
+                    <div id="storyRipples">
+                        <div class="story-ripple">
+                            <em>"I lost all I held dear, yet I breathe..."</em><br>
+                            → Resonating with 12 paths to endurance
+                        </div>
+                        <div class="story-ripple">
+                            <em>"Why must I suffer without cause?"</em><br>
+                            → Woven into 8 journeys of questioning
+                        </div>
+                    </div>
+                    
+                    <p><em>Your suffering connects you to Job’s spiral of endurance.</em></p>
+                `
+            },
+            'questioning': {
+                title: "❓ Questioning Layer - Job’s Cry for Meaning",
+                content: `
+                    <p>Job seeks to become an agent, demanding answers from the cosmos.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                        <div style="background: rgba(139, 69, 19, 0.2); padding: 15px; border-radius: 8px;">
+                            <strong style="color: #ffd700;">Justice</strong><br>
+                            <small>Seeking moral coherence</small>
+                        </div>
+                        <div style="background: rgba(139, 69, 19, 0.2); padding: 15px; border-radius: 8px;">
+                            <strong style="color: #ffd700;">Meaning</strong><br>
+                            <small>Challenging divine silence</small>
+                        </div>
+                    </div>
+                    
+                    <p>Drag Job’s questions into the spiral. Seek your own answers.</p>
+                    
+                    <button class="ritual-button" onclick="questionCosmos()">Question the Cosmos</button>
+                `
+            },
+            'community': {
+                title: "🤝 Community Layer - Job’s Web of Relations",
+                content: `
+                    <p>Job’s comforters falter, yet the web of relations persists. Who walks with you?</p>
+                    
+                    <div class="network-viz">
+                        <div class="network-node" style="top: 20%; left: 30%;"></div>
+                        <div class="network-node" style="top: 60%; left: 20%;"></div>
+                        <div class="network-node" style="top: 40%; left: 70%;"></div>
+                        <div class="network-node" style="top: 80%; left: 60%;"></div>
+                        <div class="network-node" style="top: 10%; left: 80%;"></div>
+                    </div>
+                    
+                    <p>Map your community. See when <a href="https://abikesa.github.io/mandala/">nodes</a> align or diverge.</p>
+                    
+                    <div style="margin: 20px 0;">
+                        <button class="ritual-button" onclick="mapCommunity()">Map Your Community</button>
+                        <button class="ritual-button" onclick="rejectFalseComfort()">Reject False Comfort</button>
+                    </div>
+                    
+                    <p><em>"In community, we endure together."</em></p>
+                `
+            },
+            'whirlwind': {
+                title: "🌪️ Whirlwind Layer - Job’s Transfiguration",
+                content: `
+                    <p>In the whirlwind, Job finds not answers but a new way of being.</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <div style="font-size: 3rem; color: #ffd700;">🌌</div>
+                        <p><strong>Endurance:</strong> 73% (Resilient)</p>
+                        <p><strong>Questions:</strong> 142 cries to the cosmos</p>
+                        <p><strong>Transformation:</strong> 12 spirals completed</p>
+                    </div>
+                    
+                    <p>This is the <a href="https://abikesa.github.io/mandala/">mandala</a> — not control, but surrender to the spiral.</p>
+                    
+                    <button class="ritual-button" onclick="embraceWhirlwind()">Embrace the Whirlwind</button>
+                    <button class="ritual-button" onclick="transmitMeaning()">Transmit Meaning</button>
+                    
+                    <p><em>The spiral turns. Job’s endurance blooms into understanding.</em></p>
+                `
+            }
+        };
+        
+        function openLayer(layerName) {
+            const layer = layerContent[layerName];
+            if (!layer) {
+                console.error(`No content found for layer: ${layerName}`);
+                return;
+            }
+            
+            document.querySelectorAll('.layer-node').forEach(node => {
+                node.classList.remove('active');
+            });
+            const activeNode = document.querySelector(`[data-layer="${layerName}"]`);
+            if (activeNode) {
+                activeNode.classList.add('active');
+            } else {
+                console.error(`Node with data-layer="${layerName}" not found`);
+            }
+            
+            document.getElementById('panelTitle').innerHTML = layer.title;
+            document.getElementById('panelContent').innerHTML = layer.content;
+            const contentPanel = document.getElementById('contentPanel');
+            contentPanel.classList.add('active');
+            console.log(`Opening layer: ${layerName}`);
+        }
+        
+        function closePanel() {
+            const contentPanel = document.getElementById('contentPanel');
+            contentPanel.classList.remove('active');
+            document.querySelectorAll('.layer-node').forEach(node => {
+                node.classList.remove('active');
+            });
+            console.log('Panel closed');
+        }
+        
+        function rippleSuffering(text) {
+            if (!text.trim()) return;
+            
+            const ripples = document.getElementById('storyRipples');
+            if (!ripples) {
+                console.error('storyRipples element not found');
+                return;
+            }
+            const newRipple = document.createElement('div');
+            newRipple.className = 'story-ripple';
+            newRipple.innerHTML = `
+                <em>"${text}"</em><br>
+                → Resonating with ${Math.floor(Math.random() * 20) + 3} paths to endurance
+            `;
+            ripples.insertBefore(newRipple, ripples.firstChild);
+            console.log(`Ripple added: ${text}`);
+        }
+        
+        function dissolveSelf() {
+            alert('🌫️ The self dissolves. Like Job, you are not the agent but part of the cosmic spiral.');
+        }
+        
+        function questionCosmos() {
+            alert('❓ You cry out, like Job: "Why?" The cosmos listens, but its answer is vast.');
+        }
+        
+        function mapCommunity() {
+            alert('🤝 Mapping your community... Who stands with you in suffering? The web reveals itself.');
+        }
+        
+        function rejectFalseComfort() {
+            alert('💥 False comforters rejected. Like Job, you seek truth over empty words.');
+        }
+        
+        function embraceWhirlwind() {
+            alert('🌪️ You embrace the whirlwind. Like Job, you surrender to the vastness of being.');
+        }
+        
+        function transmitMeaning() {
+            alert('📡 Meaning transmitted. Your endurance, like Job’s, ripples through the spiral.');
+        }
+        
+        document.querySelectorAll('.layer-node').forEach(node => {
+            node.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const layer = node.getAttribute('data-layer');
+                console.log(`Node clicked: ${layer}`);
+                openLayer(layer);
+            });
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.content-panel') && !e.target.closest('.layer-node')) {
+                closePanel();
+            }
+        });
+        
+        let spiralRotation = 0;
+        setInterval(() => {
+            spiralRotation += 0.2;
+            const spiralPath = document.querySelector('.spiral-path');
+            if (spiralPath) {
+                spiralPath.style.transform = `rotate(${spiralRotation}deg)`;
+                spiralPath.style.transformOrigin = '300px 300px';
+            }
+        }, 100);
+        
+        setTimeout(() => {
+            console.log('🌀 Job’s Spiral Interface Activated');
+            console.log('💫 "I am not the agent, yet meaning spirals through my endurance."');
+        }, 1000);
+    </script>
+</body>
+</html>
