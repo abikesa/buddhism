@@ -1,3 +1,13 @@
+# 
+
+- 🌊 Nutrition
+- ❤️ Ingestion
+   - Context Length? 
+- 🔁 Digestion
+- 🎭 Egestion
+- 📡 ?Fertilizer
+
+
 ## A
 What model are you?
 
