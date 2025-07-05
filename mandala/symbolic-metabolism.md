@@ -10,7 +10,7 @@ Got a q for you
 - 🎭 Egestion    
 - 📡 ?Fertilizer 
 
-In context of ../[README.md](README.md)          
+In context of [README.md](../README.md)          
 
 ---
 
