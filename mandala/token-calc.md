@@ -3,16 +3,16 @@
 
 Really, really freaked out by the number of tokens made available to chatbot users. now i see that $200/month tier is justified, if that means a shitload of tokens
 
-- `.csv`
-- `.py`
+- 🌊 `.csv`
+- ❤️ `.py`
    - 🌊 `origins.py`
    - ❤️ `process.py`
    - 🔁 `time.py`
    - 🎭 `static.py`
    - 📡 `flask_api.py` 
-- `.jinja2`
-- `.html`
-- `.yaml`
+- 🔁 `.jinja2`
+- 🎭 `.html`
+- 📡 `.yaml`
 
 ---
 
