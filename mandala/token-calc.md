@@ -192,7 +192,7 @@ Writes output to CSV. Usually light on tokens unless:
 * **Use summaries** instead of full logs for recursive memory.
 * **For serious sim work (>500 agents with recursion)**: switch to **Pro/Team tier with extended context** (may get up to 1M tokens in API or Team plans).
 
----
+---    
 
 Would you like me to write a `token_profiler.py` that logs estimated token usage across your `.csv`, `.py`, and `.jinja2` files for dev monitoring?
       
